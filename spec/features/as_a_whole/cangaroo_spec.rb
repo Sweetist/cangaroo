@@ -59,7 +59,6 @@ RSpec.describe 'Cangaroo', type: :request do
 
   context 'when a job transform does nothing' do
     it 'receives a request with a payload and generates a request with the same payload' do
-
       transformed_request_params = {
         headers: {
           "X_HUB_TOKEN" => "8d49cddb4291562808bfca1bee8a9f7cf947a987",
