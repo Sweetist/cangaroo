@@ -1,11 +1,10 @@
 require 'simplecov'
-require 'codeclimate-test-reporter'
 require 'pry-byebug'
 
 SimpleCov.start 'rails' do
   add_group 'Commands', 'app/commands'
+  add_filter 'lib/cangaroo/version'
 end
-CodeClimate::TestReporter.start
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
@@ -31,6 +30,8 @@ require 'rspec/rails'
   spec_helpers
 ).each { |path| require File.expand_path("../support/#{path}.rb", __FILE__) }
 
+Dir[File.dirname(__FILE__) + '/support/jobs/*.rb'].each { |file| require file }
+
 # Checks for pending migrations before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
@@ -41,6 +42,7 @@ RSpec.configure do |config|
     Rails.configuration.cangaroo.basic_auth = false
     Rails.configuration.cangaroo.jobs = []
     Rails.configuration.cangaroo.poll_job = []
+    Rails.configuration.cangaroo.logger = nil
   end
 
   # The different available types are documented in the features, such as in

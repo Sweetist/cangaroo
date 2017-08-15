@@ -1,23 +1,13 @@
 module Cangaroo
   class CountJsonObject
-    include Cangaroo::Log
     include Interactor
 
-    before :prepare_context
-
     def call
-      context.object_count = context.data.inject({}) do |o, (k, v)|
+      context.object_count = context.json_body.each_with_object({}) do |(k, v), o|
         o[k] = v.size
-        o
       end
 
-      log.info 'total consumed payloads', count: context.object_count
-    end
-
-    private
-
-    def prepare_context
-      context.data = JSON.parse(context.json_body)
+      Cangaroo.logger.info 'total consumed payloads', count: context.object_count
     end
   end
 end

@@ -369,7 +369,7 @@ Tests are written using rspec and Appraisals
 
 * Run `bundle exec appraisal install` before running any specs
 * `bundle exec rake` will run the test suite for rails 4 and rails 5
-* `bundle exec rspec` will run specs for a single rails version
+* `bundle exec rspec` will run specs for the latest rails version
 * if you want run specs only for for rails 4 run `appraisal rails-4 rake`, for rails 5 run `appraisal rails-5 rake`.
 
 ## License
@@ -378,7 +378,7 @@ Cangaroo is copyright © 2016 [Nebulab](http://nebulab.it/). It is free software
 
 ## About
 
-![Nebulab](http://nebulab.it/assets/logo.png)
+![Nebulab](http://nebulab.it/assets/images/public/logo.svg)
 
 Cangaroo is funded and maintained by the [Nebulab](http://nebulab.it/) team.
 

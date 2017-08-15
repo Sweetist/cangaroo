@@ -1,7 +1,5 @@
-require_dependency 'cangaroo/application_controller'
-
 module Cangaroo
-  class EndpointController < ApplicationController
+  class EndpointController < ActionController::Base
     before_action :ensure_json_request
     before_action :handle_request
 
@@ -19,51 +17,47 @@ module Cangaroo
     private
 
     def handle_error(exception)
-      if Rails.env.development?
-        raise(exception)
-      else
-        render json: { error: 'Something went wrong!' }, status: 500
-      end
+      raise(exception) if Rails.env.development?
+      render json: { error: 'Something went wrong!' }, status: 500
     end
 
     def handle_request
       @command = HandleRequest.call(
         key: key,
         token: token,
-        json_body: params[:endpoint].to_json,
+        json_body: JSON.parse(request.raw_post),
         jobs: Rails.configuration.cangaroo.jobs
       )
     end
 
     def ensure_json_request
       return if request.headers['Content-Type'] == 'application/json'
-      render nothing: true, status: 406
+
+      render body: nil, status: 406
     end
 
     def key
-      if Rails.configuration.cangaroo.basic_auth
-        if !ActionController::HttpAuthentication::Basic.has_basic_credentials?(request)
-          return nil
-        end
-
-        user, pass = ActionController::HttpAuthentication::Basic::user_name_and_password(request)
-        user
-      else
-        request.headers['X-Hub-Store']
-      end
+      return user if Rails.configuration.cangaroo.basic_auth
+      request.headers['X-Hub-Store']
     end
 
     def token
-      if Rails.configuration.cangaroo.basic_auth
-        if !ActionController::HttpAuthentication::Basic.has_basic_credentials?(request)
-          return nil
-        end
+      return password if Rails.configuration.cangaroo.basic_auth
+      request.headers['X-Hub-Access-Token']
+    end
 
-        user, pass = ActionController::HttpAuthentication::Basic::user_name_and_password(request)
-        pass
-      else
-        request.headers['X-Hub-Access-Token']
-      end
+    def user
+      user_and_password.try(:first)
+    end
+
+    def password
+      user_and_password.try(:last)
+    end
+
+    def user_and_password
+      return nil unless ActionController::HttpAuthentication::Basic.has_basic_credentials?(request)
+
+      ActionController::HttpAuthentication::Basic.user_name_and_password(request)
     end
   end
 end
