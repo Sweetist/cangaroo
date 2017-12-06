@@ -10,7 +10,7 @@ module Cangaroo
     protected
 
     def connection_request
-      Cangaroo::Webhook::Client.new(destination_connection, path).post(transform, job_id, parameters)
+      Cangaroo::Webhook::Client.new(destination_connection, path).post(transform, job_id, parameters.merge(request_params))
     end
 
     def restart_flow(response)

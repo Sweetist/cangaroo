@@ -16,6 +16,10 @@ module Cangaroo
       arguments.first.fetch(:type)
     end
 
+    def request_params
+      arguments.first.fetch(:request_params)
+    end
+
     def payload
       arguments.first.fetch(:payload)
     end

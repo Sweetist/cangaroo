@@ -36,7 +36,8 @@ module Cangaroo
           vendor: context.vendor,
           sync_type: context.sync_type,
           type: type,
-          payload: payload
+          payload: payload,
+          request_params: context.parameters
         )
       end
     end
