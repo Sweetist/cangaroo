@@ -37,7 +37,7 @@ module Cangaroo
           sync_type: context.sync_type,
           type: type,
           payload: payload,
-          request_params: context.parameters
+          request_params: context.parameters || {}
         )
       end
     end
