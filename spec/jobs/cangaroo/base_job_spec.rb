@@ -40,7 +40,8 @@ module Cangaroo
 
     describe '#transform' do
       it 'log error if error' do
-        expect(Cangaroo.logger).to receive(:error)
+        expect(Cangaroo.logger)
+          .to receive(:error).with(anything, hash_including(parameters: {}))
         FakePushJobb.perform_now(options)
       end
     end

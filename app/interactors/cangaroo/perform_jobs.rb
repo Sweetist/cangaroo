@@ -34,10 +34,9 @@ module Cangaroo
         klass.new(
           source_connection: context.source_connection,
           vendor: context.vendor,
-          sync_type: context.sync_type,
           type: type,
           payload: payload,
-          request_params: context.parameters || {}
+          request_params: context.request_params || {}
         )
       end
     end
