@@ -31,7 +31,7 @@ module Cangaroo
 
         sanitized_response = sanitize_response(req)
 
-        fail Cangaroo::Webhook::Error, sanitized_response unless %w(200 201 202 204).include?(req.response.code)
+        raise Cangaroo::Webhook::Error, sanitized_response unless %w(200 201 202 204).include?(req.response.code)
         sanitized_response
       end
 
