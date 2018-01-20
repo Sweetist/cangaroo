@@ -41,7 +41,18 @@ module Cangaroo
       request_params.merge(message.dig('parameters'))
     end
 
-    rescue_from(StandardError) do |exception|
+    def logger_with_hash(exception)
+      Cangaroo.logger.error 'Exception in Integration',
+                            message: message.dig('summary', 'message'),
+                            cause: message.dig('cause'),
+                            backtrace: message.dig('summary', 'backtrace'),
+                            type: type || '',
+                            payload: payload || '',
+                            vendor: vendor || '',
+                            parameters: error_params(message)
+    end
+
+    def logger_with_string(exception)
       Cangaroo.logger.error 'Exception in Cangaroo',
                             message: exception.message,
                             cause: exception.cause,
@@ -51,16 +62,19 @@ module Cangaroo
                             vendor: vendor || '',
                             parameters: request_params
     end
-    rescue_from(Cangaroo::Webhook::Error) do |exception|
-      message = JSON.parse(exception.message) if exception.message
-      Cangaroo.logger.error 'Exception in Integration',
-                            message: message.dig('summary', 'message'),
-                            cause: message.dig('cause'),
-                            backtrace: message.dig('summary', 'backtrace'),
-                            type: type || '',
-                            payload: payload || '',
-                            vendor: vendor || '',
-                            parameters: error_params(message)
+
+    def exception_message(message)
+      JSON.parse(exception.message)
+    rescue StandardError
+      message
+    end
+
+    rescue_from(StandardError) do |exception|
+      if exception_message(exception.message).respond_to?(:dig)
+        logger_with_hash(exception_message(exception.message))
+      else
+        logger_with_string(exception)
+      end
     end
   end
 end
