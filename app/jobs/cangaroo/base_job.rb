@@ -41,7 +41,7 @@ module Cangaroo
       request_params.merge(message.dig('parameters'))
     end
 
-    def logger_with_hash(exception)
+    def logger_with_hash(message)
       Cangaroo.logger.error 'Exception in Integration',
                             message: message.dig('summary', 'message'),
                             cause: message.dig('cause'),
@@ -64,7 +64,7 @@ module Cangaroo
     end
 
     def exception_message(message)
-      JSON.parse(exception.message)
+      JSON.parse(message)
     rescue StandardError
       message
     end
