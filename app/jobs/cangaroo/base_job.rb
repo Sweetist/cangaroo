@@ -70,6 +70,7 @@ module Cangaroo
     end
 
     rescue_from(StandardError) do |exception|
+      Airbrake.notify exception if defined? Airbrake
       if exception_message(exception.message).respond_to?(:dig)
         logger_with_hash(exception_message(exception.message))
       else
