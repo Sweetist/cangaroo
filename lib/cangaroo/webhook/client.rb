@@ -30,7 +30,6 @@ module Cangaroo
         req = self.class.post(url, request_options)
 
         sanitized_response = sanitize_response(req)
-
         raise Cangaroo::Webhook::Error, sanitized_response unless %w(200 201 202 204).include?(req.response.code)
         sanitized_response
       end

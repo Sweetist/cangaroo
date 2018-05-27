@@ -42,6 +42,17 @@ module Cangaroo
     end
 
     def logger_with_hash(message)
+      Cangaroo.logger.error 'Exception in Sweet',
+                            message: message.dig('summary'),
+                            cause: message.dig('cause'),
+                            type: type || '',
+                            payload: payload || '',
+                            vendor: vendor || '',
+                            parameters: error_params(message)
+    end
+
+    def logger_with_hash_in_hash(message)
+      return logger_with_hash(message) if message.dig('summary').is_a? String
       Cangaroo.logger.error 'Exception in Integration',
                             message: message.dig('summary', 'message'),
                             cause: message.dig('cause'),
@@ -72,7 +83,7 @@ module Cangaroo
     rescue_from(StandardError) do |exception|
       Airbrake.notify exception if defined? Airbrake
       if exception_message(exception.message).respond_to?(:dig)
-        logger_with_hash(exception_message(exception.message))
+        logger_with_hash_in_hash(exception_message(exception.message))
       else
         logger_with_string(exception)
       end
