@@ -40,6 +40,19 @@ describe Cangaroo::PerformJobs do
         expect(context).to be_a_success
       end
     end
+    context 'no enqueued jobs' do
+      let(:json_body) { JSON.parse(load_fixture('json_payload_ok.json')) }
+      let(:job_a) { double('job_a', perform?: false, enqueue: nil) }
+      let(:job_b) { double('job_b', perform?: false, enqueue: nil) }
+
+      it 'execute airbrake' do
+        notif = class_double("Airbrake").as_stubbed_const
+        expect(notif).to receive(:notify).exactly(4).times
+        expect(context).to be_a_success
+
+        # expect(notif).to have_received(:notify)
+      end
+    end
 
     context 'payload with no objects' do
       let(:json_body) { JSON.parse(load_fixture('json_payload_empty.json')) }

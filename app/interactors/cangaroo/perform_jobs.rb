@@ -21,12 +21,21 @@ module Cangaroo
           skipped_jobs << job.class.to_s
         end
       end
+
+      jobs_response(enqueued_jobs, skipped_jobs, payload)
+    end
+
+    def jobs_response(enqueued_jobs, skipped_jobs, payload)
       Cangaroo.logger.info 'Enqueu jobs:', enqueued_jobs: enqueued_jobs,
                                            skipped_jobs: skipped_jobs
+      return if enqueued_jobs.any?
 
-      # Cangaroo.logger.info 'Enqueu jobs:', enqueued_jobs: enqueued_jobs,
-      #                                      skipped_jobs: skipped_jobs,
-      #                                      payload: payload
+      air_params = {
+        time: Time.current,
+        payload: payload,
+        vendor: context.vendor
+      }
+      Airbrake.notify('No Enqueued Jobs', air_params) if defined? Airbrake
     end
 
     def initialize_jobs(type, payload)
